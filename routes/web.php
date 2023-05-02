@@ -1,8 +1,10 @@
 <?php
 
-use Illuminate\Auth\Events\Logout;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\RegisterController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\GameController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,33 +17,34 @@ use App\Http\Controllers\AuthController;
 |
 */
 
-
+// Public routes
 Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/login', function () {
-    return view('welcome');
-});
+Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 
 Route::get('/register', function () {
     return view('register');
 });
 
-Route::get('/games', [App\Http\Controllers\GameController::class, 'showAll']);
+// Protected routes
+Route::middleware(['auth'])->group(function () {
+    Route::get('/games', [GameController::class, 'showAll']);
 
-Route::get('/game/addgame', [App\Http\Controllers\GameController::class, 'create']);
-Route::post('/game/addgame', [App\Http\Controllers\GameController::class, 'create']);
+    Route::get('/game/addgame', [GameController::class, 'create']);
+    Route::post('/game/addgame', [GameController::class, 'create']);
 
-Route::get('/game/editgame/{game}', [App\Http\Controllers\GameController::class, 'edit']);
-Route::post('/game/editgame/{game}', [App\Http\Controllers\GameController::class, 'edit']);
+    Route::get('/game/editgame/{game}', [GameController::class, 'edit']);
+    Route::post('/game/editgame/{game}', [GameController::class, 'edit']);
 
-Route::get('/game/delgame/{id}', [App\Http\Controllers\GameController::class, 'deletegame']);
+    Route::get('/game/delgame/{id}', [GameController::class, 'deletegame']);
 
-Route::get('/game/reset', [App\Http\Controllers\GameController::class, 'reset']);
+    Route::get('/game/reset', [GameController::class, 'reset']);
 
-Route::post('/login', [App\Http\Controllers\AuthController::class, 'login']);
+    Route::post('/logout', [UserController::class, 'logout']);
+});
 
-Route::post('/register', [App\Http\Controllers\RegisterController::class, 'register']);
-
-Route::post('/logout', [App\Http\Controllers\UserController::class, 'logout']);
+// Auth routes
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/register', [RegisterController::class, 'register']);

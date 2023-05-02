@@ -8,6 +8,10 @@ use Illuminate\Support\Facades\Session;
 
 class AuthController extends Controller
 {
+    public function showLoginForm() {
+        return view('welcome');
+    }
+
     public function login(Request $request) {
         $credentials = $request->only('username', 'password');
     
@@ -19,5 +23,6 @@ class AuthController extends Controller
             return redirect()->back()->with('error', 'Invalid username or password');
         }
     }
+    
 
 }
